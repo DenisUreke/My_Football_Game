@@ -6,7 +6,7 @@ public class PlayerInputReader : MonoBehaviour
 {
 
     private BallControl ballControl;
-    private bool isControlled;
+    private BallState currentBallState;
 
     // shooting and passing input handling
     private bool isShooting = false;
@@ -34,7 +34,7 @@ public class PlayerInputReader : MonoBehaviour
 
     private void Start()
     {
-        isControlled = ballControl.IsControlled;
+        currentBallState = ballControl.CurrentBallState;
     }
 
     private void Update()
@@ -56,11 +56,11 @@ public class PlayerInputReader : MonoBehaviour
 
     private void OnShoot(InputAction.CallbackContext context)
     {
-        if (!isControlled)
+        if (currentBallState == BallState.Free)
         {
             return;
         }
-        if (context.started)
+        else if (context.started)
         {
             shootHoldTime = 0f;
             isShooting = true;
@@ -84,11 +84,11 @@ public class PlayerInputReader : MonoBehaviour
 
     private void OnPass(InputAction.CallbackContext context)
     {
-        if (!isControlled)
+        if (currentBallState == BallState.Free)
         {
             return;
         }
-        if (context.started)
+        else if (context.started)
         {
             passHoldTime = 0f;
             isPassing = true;
@@ -112,7 +112,10 @@ public class PlayerInputReader : MonoBehaviour
 
     private void OnSwitchPlayer()
     {
-        switchPlayerRequested = true;
+        if (currentBallState == BallState.Free || currentBallState == BallState.ComputerControlled)
+        {
+            switchPlayerRequested = true;
+        }
     }
 
     public bool ConsumeSwitchPlayerRequest()

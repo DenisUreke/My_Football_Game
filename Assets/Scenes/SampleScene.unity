@@ -921,6 +921,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a66ef2b8a53b69649b2f7002aafc7a88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BallControl
+  players:
+  - {fileID: 2068207448}
+  - {fileID: 421235331}
+  - {fileID: 274325588}
 --- !u!50 &1100926789
 Rigidbody2D:
   serializedVersion: 5

@@ -7,7 +7,7 @@ public class PlayerMovement : MonoBehaviour
     private PlayerStats playerStats;
     private GameValues gameValues;
 
-    private Rigidbody2D rb;
+    public Rigidbody2D rb;
 
     private Vector2 movementInput;
     private Vector2 currentPlayerVelocity;
@@ -19,6 +19,9 @@ public class PlayerMovement : MonoBehaviour
     private float maxSpeed;
     private float maxAcceleration;
     private float maxFriction;
+
+    public Vector2 CurrentPlayerDirection => currentPlayerDirection;
+    public Vector2 CurrentPlayerVelocity => currentPlayerVelocity;
 
     private void Awake()
     {
@@ -72,9 +75,13 @@ public class PlayerMovement : MonoBehaviour
             targetVelocity,
             rate * Time.fixedDeltaTime 
         );
+
         Vector2 newPosition = rb.position + currentPlayerVelocity * Time.fixedDeltaTime; // Calculate new position based on current velocity
         rb.MovePosition(newPosition); // Move the Rigidbody2D to the new position
-        currentPlayerDirection = currentPlayerVelocity.normalized;
+        if (currentPlayerVelocity.sqrMagnitude > 0.01f)
+        {
+            currentPlayerDirection = currentPlayerVelocity.normalized;
+        }
     }
 
     public void SetMoveInput(Vector2 input) // Called by ControlManager to update movement input
