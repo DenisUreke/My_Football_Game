@@ -200,6 +200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64ccc61c8d6b8944ba0dc0759848b227, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+  rb: {fileID: 0}
 --- !u!58 &274325592
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -418,6 +419,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64ccc61c8d6b8944ba0dc0759848b227, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+  rb: {fileID: 0}
 --- !u!58 &421235335
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -824,6 +826,7 @@ MonoBehaviour:
   maxPlayerSpeed: 30
   maxAccelleration: 30
   maxFriction: 100
+  acceptablePassAngle: 45
 --- !u!4 &629346492
 Transform:
   m_ObjectHideFlags: 0
@@ -884,11 +887,56 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ControlManager
   inputReader: {fileID: 0}
+  distanceCalculator: {fileID: 0}
   players:
   - {fileID: 2068207448}
   - {fileID: 421235331}
   - {fileID: 274325588}
   ball: {fileID: 1100926788}
+--- !u!1 &1004257960
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1004257962}
+  - component: {fileID: 1004257961}
+  m_Layer: 0
+  m_Name: PlayerSkillExecution
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1004257961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1004257960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2e08f2904eeabe41b1fc3cb5f3cd664, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSkillExecution
+--- !u!4 &1004257962
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1004257960}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.18622, y: 0.64904, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1100926787
 GameObject:
   m_ObjectHideFlags: 0
@@ -1228,6 +1276,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1461204466
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1461204467}
+  - component: {fileID: 1461204468}
+  m_Layer: 0
+  m_Name: DistanceCalculator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1461204467
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1461204466}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.18622, y: 0.64904, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1461204468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1461204466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdf0fd9ae42184d438b4d1d7efba7a9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DistanceCalculator
 --- !u!1 &1907014021
 GameObject:
   m_ObjectHideFlags: 0
@@ -1474,6 +1566,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64ccc61c8d6b8944ba0dc0759848b227, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+  rb: {fileID: 0}
 --- !u!50 &2068207452
 Rigidbody2D:
   serializedVersion: 5
@@ -1552,3 +1645,5 @@ SceneRoots:
   - {fileID: 1420884032}
   - {fileID: 1907014023}
   - {fileID: 1100926791}
+  - {fileID: 1004257962}
+  - {fileID: 1461204467}

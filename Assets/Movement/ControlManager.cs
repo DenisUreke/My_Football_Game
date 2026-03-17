@@ -15,10 +15,12 @@ public class ControlManager : MonoBehaviour
     private Vector2 playerMovementInput;
 
 
+
+
     private void Awake()
     {
         inputReader = FindAnyObjectByType<PlayerInputReader>();
-        distanceCalculator = new DistanceCalculator();
+        distanceCalculator = FindAnyObjectByType <DistanceCalculator>();
     }
 
     private void Start()
@@ -74,6 +76,11 @@ public class ControlManager : MonoBehaviour
     private void Pass()
     {
         Debug.Log("Pass");
+    }
+
+    public void SetCurrentlyControlledPlayer(PlayerUnit player)
+    {
+        currentlyControlled = player;
     }
 
 }

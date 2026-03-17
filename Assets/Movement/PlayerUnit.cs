@@ -6,10 +6,15 @@ public class PlayerUnit : MonoBehaviour
     public PlayerSkillExecution playerSkillExecution;
     public PlayerStats playerStats;
 
+
+    private float dribbleInstability = 0f;
+
+    public float DribbleInstability => dribbleInstability;
+
     private void Awake()
     {
         playermovement = GetComponent<PlayerMovement>();
-        playerSkillExecution = GetComponent<PlayerSkillExecution>();
+        playerSkillExecution = FindFirstObjectByType<PlayerSkillExecution>();
         playerStats = GetComponent<PlayerStats>();
     }
 }

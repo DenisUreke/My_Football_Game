@@ -13,9 +13,18 @@ public class GameValues : MonoBehaviour
     [Header("Max Friction")]
     [SerializeField] private float maxFriction = 0f;
 
+    [Header("Acceptable Pass Angle")]
+    [SerializeField] private float maxPassAngle = 45f;
+
+    [Header("Blocked Player Timer")]
+    [SerializeField] private float blockedPlayerTimer = 0.2f;
+
     public float MaxPlayerSpeed => maxPlayerSpeed;
     public float MaxAccelleration => maxAccelleration;
 
     public float MaxFriction => maxFriction;
+    public float MaxPassAngle => maxPassAngle;
+
+    public float BlockedPlayerTimer => blockedPlayerTimer;
 
 }
