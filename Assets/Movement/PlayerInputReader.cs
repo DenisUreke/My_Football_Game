@@ -4,15 +4,11 @@ using UnityEngine.InputSystem;
 
 public class PlayerInputReader : MonoBehaviour
 {
-
-    private BallControl ballControl;
     private StateHolder stateHolder;
 
     // shooting and passing input handling
     private bool isShooting = false;
-    private bool shotRequested = false;
     private bool isPassing = false;
-    private bool passRequested = false;
 
     // switch player input handling
     private bool switchPlayerRequested = false;
@@ -22,7 +18,6 @@ public class PlayerInputReader : MonoBehaviour
 
     private void Awake()
     {
-        ballControl = FindAnyObjectByType<BallControl>();
         stateHolder = FindAnyObjectByType<StateHolder>();
     }
 
@@ -56,7 +51,7 @@ public class PlayerInputReader : MonoBehaviour
         else
         {
             isShooting = false;
-            shotRequested = true;
+            stateHolder.ShootRequested = true;
         }
     }
 
@@ -74,16 +69,16 @@ public class PlayerInputReader : MonoBehaviour
         else
         {
             isPassing = false;
-            passRequested = true;
+            stateHolder.PassRequested = true;
             Debug.Log($"Pass requested {stateHolder.PassPower} seconds");
         }
     }
 
     public bool ConsumeShootRequest()
     {
-        if (shotRequested)
+        if (stateHolder.ShootRequested)
         {
-            shotRequested = false;
+            stateHolder.ShootRequested = false;
             return true;
         }
         return false;
@@ -91,9 +86,9 @@ public class PlayerInputReader : MonoBehaviour
 
     public bool ConsumePassRequest()
     {
-        if (passRequested)
+        if (stateHolder.PassRequested)
         {
-            passRequested = false;
+            stateHolder.PassRequested = false;
             return true;
         }
         return false;

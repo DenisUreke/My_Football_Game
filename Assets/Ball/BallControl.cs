@@ -11,14 +11,6 @@ public class BallControl : MonoBehaviour
     private StateHolder stateHolder;
     private GameValues gameValues;
 
-
-    // Actions
-    private bool passRequested = false;
-    private bool shootRequested = false;
-
-    Vector2 passDirection;
-    Vector2 shootDirection;
-
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -31,23 +23,23 @@ public class BallControl : MonoBehaviour
     {
         stateHolder.CurrentBallHolder = controlledPlayer;
         stateHolder.CurrentBlockedPlayer = controlledPlayer;
-        passDirection = distanceCalculator.GetClosestPassDirection(stateHolder.Players, stateHolder.CurrentBallHolder);
+        stateHolder.PassDirection = distanceCalculator.GetClosestPassDirection(stateHolder.Players, stateHolder.CurrentBallHolder);
         stateHolder.PassPower = power;
-        passRequested = true;
+        stateHolder.PassRequested = true;
     }
     public void RequestShoot(float power, PlayerUnit controlledPlayer)
     {
         stateHolder.ShootPower = power;
-        shootRequested = true;
+        stateHolder.ShootRequested = true;
     }
 
     private void ClearPassRequest()
     {
-        passRequested = false;
+        stateHolder.PassRequested = false;
     }
     private void ClearShootRequest()
     {
-        shootRequested = false;
+        stateHolder.ShootRequested = false;
     }
 
     private void FixedUpdate()
@@ -95,12 +87,12 @@ public class BallControl : MonoBehaviour
                 rb.bodyType = RigidbodyType2D.Dynamic;
                 GetComponent<CircleCollider2D>().enabled = true;
             }
-            if (passRequested)
+            if (stateHolder.PassRequested)
             {
                 stateHolder.CurrentBallState = BallState.Free;
                 rb.bodyType = RigidbodyType2D.Dynamic;
                 GetComponent<CircleCollider2D>().enabled = true;
-                rb.AddForce(passDirection * stateHolder.PassPower, ForceMode2D.Impulse);
+                rb.AddForce(stateHolder.PassDirection * stateHolder.PassPower * gameValues.PassPowerMultiplier, ForceMode2D.Impulse);
                 ClearPassRequest();
 
             }

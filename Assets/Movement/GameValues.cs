@@ -19,6 +19,9 @@ public class GameValues : MonoBehaviour
     [Header("Blocked Player Timer")]
     [SerializeField] private float blockedPlayerTimer = 0.2f;
 
+    [Header("Pass Power Multiplier")]
+    [SerializeField] private float passPowerMultiplier = 8f;
+
     public float MaxPlayerSpeed => maxPlayerSpeed;
     public float MaxAccelleration => maxAccelleration;
 
@@ -26,5 +29,7 @@ public class GameValues : MonoBehaviour
     public float MaxPassAngle => maxPassAngle;
 
     public float BlockedPlayerTimer => blockedPlayerTimer;
+
+    public float PassPowerMultiplier => passPowerMultiplier;
 
 }

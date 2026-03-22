@@ -10,7 +10,6 @@ public class ControlManager : MonoBehaviour
     [SerializeField] BallControl ball;
 
     private Vector2 playerMovementInput;
-    private Vector2 passDirection;
 
     private void Awake()
     {
@@ -83,7 +82,7 @@ public class ControlManager : MonoBehaviour
     }
     private void Pass()
     {
-        passDirection = distanceCalculator.GetClosestPassDirection(stateHolder.Players, stateHolder.CurrentlyControlled);
+        //stateHolder.PassDirection = distanceCalculator.GetClosestPassDirection(stateHolder.Players, stateHolder.CurrentlyControlled);
         ball.RequestPass(stateHolder.PassPower, stateHolder.CurrentlyControlled);
     }
 
