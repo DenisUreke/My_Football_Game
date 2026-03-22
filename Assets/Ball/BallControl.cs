@@ -6,20 +6,11 @@ using UnityEngine;
 [RequireComponent(typeof(CircleCollider2D))]
 public class BallControl : MonoBehaviour
 {
-    [SerializeField] PlayerUnit[] players;
-    private PlayerUnit currentBallHolder;
-
-    private BallState currentBallState;
-
-    public BallState CurrentBallState => currentBallState;
-
     private Rigidbody2D rb;
     private DistanceCalculator distanceCalculator;
+    private StateHolder stateHolder;
     private GameValues gameValues;
 
-    // Timers to prevent immediate re-capture of the ball after a pass or shot
-    public PlayerUnit currentBlockedPlayer;
-    public float blockedPlayerTimer;
 
     // Actions
     private bool passRequested = false;
@@ -28,33 +19,25 @@ public class BallControl : MonoBehaviour
     Vector2 passDirection;
     Vector2 shootDirection;
 
-    private float passPower;
-    private float shootPower;
-
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         distanceCalculator = FindAnyObjectByType<DistanceCalculator>();
+        stateHolder = FindAnyObjectByType<StateHolder>();
         gameValues = FindAnyObjectByType<GameValues>();
-    }
-
-    private void Start()
-    {
-        currentBallState = BallState.Free;
-        blockedPlayerTimer = gameValues.BlockedPlayerTimer;
     }
 
     public void RequestPass(float power, PlayerUnit controlledPlayer)
     {
-        currentBallHolder = controlledPlayer;
-        currentBlockedPlayer = controlledPlayer;
-        passDirection = distanceCalculator.GetClosestPassDirection(players, currentBallHolder);
-        passPower = power;
+        stateHolder.CurrentBallHolder = controlledPlayer;
+        stateHolder.CurrentBlockedPlayer = controlledPlayer;
+        passDirection = distanceCalculator.GetClosestPassDirection(stateHolder.Players, stateHolder.CurrentBallHolder);
+        stateHolder.PassPower = power;
         passRequested = true;
     }
     public void RequestShoot(float power, PlayerUnit controlledPlayer)
     {
-        shootPower = power;
+        stateHolder.ShootPower = power;
         shootRequested = true;
     }
 
@@ -69,17 +52,17 @@ public class BallControl : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (currentBallState == BallState.Free) 
+        if (stateHolder.CurrentBallState == BallState.Free) 
         { 
-            foreach (var player in players)
+            foreach (var player in stateHolder.Players)
             {
-                if (player == currentBlockedPlayer)
+                if (player == stateHolder.CurrentBlockedPlayer)
                 {
-                    blockedPlayerTimer -= Time.fixedDeltaTime;
+                    stateHolder.DecrementBlockedTimer(Time.fixedDeltaTime);
 
-                    if (blockedPlayerTimer <= 0)
+                    if (stateHolder.BlockedPlayerTimer <= 0)
                     {
-                        currentBlockedPlayer = null;
+                        stateHolder.CurrentBlockedPlayer = null;
                     }
                     continue;
                 }
@@ -87,8 +70,8 @@ public class BallControl : MonoBehaviour
                 { 
                     if(player.playerSkillExecution.CaptureBall())
                     {
-                        currentBallState = BallState.PlayerControlled;
-                        currentBallHolder = player;
+                        stateHolder.CurrentBallState = BallState.PlayerControlled;
+                        stateHolder.CurrentBallHolder = player;
                         rb.bodyType = RigidbodyType2D.Kinematic;
                         GetComponent<CircleCollider2D>().enabled = false;
                     }
@@ -96,25 +79,30 @@ public class BallControl : MonoBehaviour
 
             }
         }
-        else if (currentBallState == BallState.PlayerControlled || currentBallState == BallState.ComputerControlled)
+        else if (stateHolder.CurrentBallState == BallState.PlayerControlled || stateHolder.CurrentBallState == BallState.ComputerControlled)
         {
-            if (currentBallHolder.playerSkillExecution.Dribble(currentBallHolder))
+            if (stateHolder.CurrentBallHolder.playerSkillExecution.Dribble(stateHolder.CurrentBallHolder))
             {
-                Vector2 newPosition = currentBallHolder.playermovement.rb.position + currentBallHolder.playermovement.CurrentPlayerDirection * 1f;
+                Vector2 newPosition = stateHolder.CurrentBallHolder.playermovement.rb.position + stateHolder.CurrentBallHolder.playermovement.CurrentPlayerDirection * 1f;
                 rb.MovePosition(newPosition);
             }
             else
             {
-                currentBlockedPlayer = currentBallHolder;
-                blockedPlayerTimer = 0.2f;
-                currentBallState = BallState.Free;
-                currentBallHolder = null;
+                stateHolder.CurrentBlockedPlayer = stateHolder.CurrentBallHolder;
+                stateHolder.ResetBlockedTimer();
+                stateHolder.CurrentBallState = BallState.Free;
+                stateHolder.CurrentBallHolder = null;
                 rb.bodyType = RigidbodyType2D.Dynamic;
                 GetComponent<CircleCollider2D>().enabled = true;
             }
             if (passRequested)
             {
-                
+                stateHolder.CurrentBallState = BallState.Free;
+                rb.bodyType = RigidbodyType2D.Dynamic;
+                GetComponent<CircleCollider2D>().enabled = true;
+                rb.AddForce(passDirection * stateHolder.PassPower, ForceMode2D.Impulse);
+                ClearPassRequest();
+
             }
 
         }

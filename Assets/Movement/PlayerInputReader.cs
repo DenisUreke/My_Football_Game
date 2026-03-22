@@ -6,7 +6,7 @@ public class PlayerInputReader : MonoBehaviour
 {
 
     private BallControl ballControl;
-    private BallState currentBallState;
+    private StateHolder stateHolder;
 
     // shooting and passing input handling
     private bool isShooting = false;
@@ -17,35 +17,24 @@ public class PlayerInputReader : MonoBehaviour
     // switch player input handling
     private bool switchPlayerRequested = false;
 
-    private float shootHoldTime = 0f;
-    private float passHoldTime = 0f;
-
-    public float ShootHoldTime => shootHoldTime;
-    public float PassHoldTime => passHoldTime;
-
-
     private Vector2 rawMoveInput;
     public Vector2 RawMoveInput => rawMoveInput;
 
     private void Awake()
     {
         ballControl = FindAnyObjectByType<BallControl>();
-    }
-
-    private void Start()
-    {
-        currentBallState = ballControl.CurrentBallState;
+        stateHolder = FindAnyObjectByType<StateHolder>();
     }
 
     private void Update()
     {
         if (isShooting)
         {
-            shootHoldTime += Time.deltaTime;
+            stateHolder.ShootPower += Time.deltaTime;
         }
         if (isPassing)
         {
-            passHoldTime += Time.deltaTime;
+            stateHolder.PassPower += Time.deltaTime;
         }
     }
 
@@ -54,21 +43,39 @@ public class PlayerInputReader : MonoBehaviour
         rawMoveInput = direction.Get<Vector2>();
     }
 
-    private void OnShoot(InputAction.CallbackContext context)
+    private void OnShoot(InputValue value)
     {
-        if (currentBallState == BallState.Free)
-        {
+        if (stateHolder.CurrentBallState == BallState.Free)
             return;
-        }
-        else if (context.started)
+
+        if (value.isPressed)
         {
-            shootHoldTime = 0f;
+            stateHolder.ShootPower = 0f;
             isShooting = true;
         }
-        else if (context.canceled)
+        else
         {
             isShooting = false;
             shotRequested = true;
+        }
+    }
+
+    private void OnPass(InputValue value)
+    {
+        if (stateHolder.CurrentBallState == BallState.Free)
+            return;
+
+        if (value.isPressed)
+        {
+            stateHolder.PassPower = 0f; // reset value to start charging
+            isPassing = true;
+            Debug.Log($"Pass button pressed {stateHolder.PassPower}");
+        }
+        else
+        {
+            isPassing = false;
+            passRequested = true;
+            Debug.Log($"Pass requested {stateHolder.PassPower} seconds");
         }
     }
 
@@ -80,24 +87,6 @@ public class PlayerInputReader : MonoBehaviour
             return true;
         }
         return false;
-    }
-
-    private void OnPass(InputAction.CallbackContext context)
-    {
-        if (currentBallState == BallState.Free)
-        {
-            return;
-        }
-        else if (context.started)
-        {
-            passHoldTime = 0f;
-            isPassing = true;
-        }
-        else if (context.canceled)
-        {
-            isPassing = false;
-            passRequested = true;
-        }
     }
 
     public bool ConsumePassRequest()
@@ -112,7 +101,7 @@ public class PlayerInputReader : MonoBehaviour
 
     private void OnSwitchPlayer()
     {
-        if (currentBallState == BallState.Free || currentBallState == BallState.ComputerControlled)
+        if (stateHolder.CurrentBallState == BallState.Free || stateHolder.CurrentBallState == BallState.ComputerControlled)
         {
             switchPlayerRequested = true;
         }

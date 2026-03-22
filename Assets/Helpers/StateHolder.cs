@@ -4,6 +4,7 @@ using UnityEngine;
 public class StateHolder : MonoBehaviour
 {
     [SerializeField] PlayerUnit[] players;
+    public PlayerUnit[] Players => players;
 
     private GameValues gamevalues;
 
@@ -29,7 +30,7 @@ public class StateHolder : MonoBehaviour
     }
     
     private float blockedPlayerTimer;
-    public float BlockedTimer => blockedPlayerTimer;
+    public float BlockedPlayerTimer => blockedPlayerTimer;
 
 
 
@@ -70,10 +71,18 @@ public class StateHolder : MonoBehaviour
     }
 
     private float passPower;
-    private float shootPower;
+    public float PassPower
+    {
+        get => passPower;
+        set => passPower = value;
+    }
 
-    public float PassPower => passPower;
-    public float ShootPower => shootPower;
+    private float shootPower;
+    public float ShootPower
+    {
+        get => shootPower;
+        set => shootPower = value;
+    }
 
     private void Awake()
     {
@@ -101,7 +110,5 @@ public class StateHolder : MonoBehaviour
     {
         passRequested = !passRequested;
     }
-
-
 
 }

@@ -5,41 +5,37 @@ public class ControlManager : MonoBehaviour
 
     public PlayerInputReader inputReader;
     public DistanceCalculator distanceCalculator;
+    private StateHolder stateHolder;
 
-    [Header("Players")]
-    [SerializeField] PlayerUnit[] players;
     [SerializeField] BallControl ball;
 
-    private PlayerUnit currentlyControlled;
-    private PlayerUnit ballholder;
     private Vector2 playerMovementInput;
-
-
-
+    private Vector2 passDirection;
 
     private void Awake()
     {
         inputReader = FindAnyObjectByType<PlayerInputReader>();
         distanceCalculator = FindAnyObjectByType <DistanceCalculator>();
+        stateHolder = FindAnyObjectByType<StateHolder>();
     }
 
     private void Start()
     {
-        if (players == null || players.Length == 0)
+        if (stateHolder.Players == null || stateHolder.Players.Length == 0)
         {
             Debug.LogError("No players assigned to ControlManager.");
             return;
         }
-        currentlyControlled = players[0];
+        stateHolder.CurrentlyControlled = stateHolder.Players[0];
     }
     private void Update()
     {
-        if (inputReader == null || players == null || players.Length == 0)
+        if (inputReader == null || stateHolder.Players == null || stateHolder.Players.Length == 0)
             return;
 
-        foreach (var player in players)
+        foreach (var player in stateHolder.Players)
         {
-            if (player == currentlyControlled)
+            if (player == stateHolder.CurrentlyControlled)
             {
                 playerMovementInput = inputReader.RawMoveInput;
                 PlayerMove();
@@ -62,12 +58,24 @@ public class ControlManager : MonoBehaviour
 
     private void PlayerMove()
     {
-        currentlyControlled.playermovement.SetMoveInput(playerMovementInput);
+        stateHolder.CurrentlyControlled.playermovement.SetMoveInput(playerMovementInput);
     }
 
     private void SwitchPlayer()
     {
-        currentlyControlled = distanceCalculator.GetClosestPlayer(ball, players, currentlyControlled);
+        PlayerUnit previousPlayer = stateHolder.CurrentlyControlled;
+
+        PlayerUnit nextPlayer = distanceCalculator.GetClosestPlayer(
+            ball,
+            stateHolder.Players,
+            stateHolder.CurrentlyControlled
+        );
+
+        if (nextPlayer == null)
+            return;
+
+        previousPlayer.playermovement.SetMoveInput(Vector2.zero);
+        stateHolder.CurrentlyControlled = nextPlayer;
     }
     private void Shoot()
     {
@@ -75,12 +83,13 @@ public class ControlManager : MonoBehaviour
     }
     private void Pass()
     {
-        Debug.Log("Pass");
+        passDirection = distanceCalculator.GetClosestPassDirection(stateHolder.Players, stateHolder.CurrentlyControlled);
+        ball.RequestPass(stateHolder.PassPower, stateHolder.CurrentlyControlled);
     }
 
     public void SetCurrentlyControlledPlayer(PlayerUnit player)
     {
-        currentlyControlled = player;
+        stateHolder.CurrentlyControlled = player;
     }
 
 }
